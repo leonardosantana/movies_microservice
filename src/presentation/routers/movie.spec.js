@@ -1,6 +1,7 @@
 class MovieRouter {
   route (httpRequest) {
-    if (!httpRequest.body.title || !httpRequest.body.language) {
+    const { title, language } = httpRequest.body
+    if (!title || !language) {
       return {
         statusCode: 400
       }

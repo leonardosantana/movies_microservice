@@ -6,7 +6,7 @@ module.exports = class MovieRouter {
     this.movieUseCase = movieUseCase
   }
 
-  route (httpRequest) {
+  async route (httpRequest) {
     try {
       const { title, language } = httpRequest.body
       if (!title) {
@@ -16,7 +16,7 @@ module.exports = class MovieRouter {
         return HttpResponse.badRequest('language')
       }
 
-      const movie = this.movieUseCase.getMovie(title, language)
+      const movie = await this.movieUseCase.getMovie(title, language)
 
       if (!movie) {
         return HttpResponse.response({})

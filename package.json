@@ -4,9 +4,9 @@
   "description": "Microserviço para indexação de filmes feita em node.js",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll",
-    "test:staged": "jest",
-    "tsc": "tsc"
+    "test": "jest --watchAll --silent --noStackTrace",
+    "test:staged": "jest --passWithNoTests --silent --noStackTrace",
+    "test:ci": "jest --coverage --noStackTrace" 
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run test:ci"
     }
   },
   "lint-staged": {

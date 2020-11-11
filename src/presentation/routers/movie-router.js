@@ -24,6 +24,7 @@ module.exports = class MovieRouter {
 
       return HttpResponse.response({ movie: movie })
     } catch (error) {
+      console.log(error)
       return HttpResponse.serverError()
     }
   }

@@ -1,23 +1,38 @@
 class MovieRouter {
   route (httpRequest) {
     if (!httpRequest || !httpRequest.body) {
-      return {
-        statusCode: 500
-      }
+      return HttpResponse.serverError()
     }
 
     const { title, language } = httpRequest.body
-    if (!title || !language) {
-      
+    if (!title) {
+      return HttpResponse.badRequest('title')
+    }
+    if (!language) {
+      return HttpResponse.badRequest('language')
     }
   }
 }
 
-class HttpResponse(){
-  static badRequest(){
+class HttpResponse {
+  static badRequest (param) {
     return {
-      statusCode: 400
+      statusCode: 400,
+      body: new MissingParamError(param)
     }
+  }
+
+  static serverError () {
+    return {
+      statusCode: 500
+    }
+  }
+}
+
+class MissingParamError extends Error {
+  constructor (param) {
+    super(`Missing param: ${param}`)
+    this.name = 'MissingParamError'
   }
 }
 
@@ -31,6 +46,7 @@ describe('Movie Router', () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new MissingParamError('title'))
   })
 
   test('Should return 400 if no movie language is provided', () => {
@@ -42,6 +58,7 @@ describe('Movie Router', () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new MissingParamError('language'))
   })
 
   test('Should return 500 if no httpRequest is provided', () => {

@@ -13,4 +13,11 @@ module.exports = class HttpResponse {
       statusCode: 500
     }
   }
+
+  static response (obj) {
+    return {
+      statusCode: 200,
+      body: obj
+    }
+  }
 }

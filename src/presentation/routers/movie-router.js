@@ -7,24 +7,24 @@ module.exports = class MovieRouter {
   }
 
   route (httpRequest) {
-    if (!httpRequest || !httpRequest.body || !this.movieUseCase || !this.movieUseCase.getMovie) {
+    try {
+      const { title, language } = httpRequest.body
+      if (!title) {
+        return HttpResponse.badRequest('title')
+      }
+      if (!language) {
+        return HttpResponse.badRequest('language')
+      }
+
+      const movie = this.movieUseCase.getMovie(title, language)
+
+      if (!movie) {
+        return HttpResponse.response({})
+      }
+
+      return HttpResponse.response({ movie: movie })
+    } catch (error) {
       return HttpResponse.serverError()
     }
-
-    const { title, language } = httpRequest.body
-    if (!title) {
-      return HttpResponse.badRequest('title')
-    }
-    if (!language) {
-      return HttpResponse.badRequest('language')
-    }
-
-    const movie = this.movieUseCase.getMovie(title, language)
-
-    if (!movie) {
-      return HttpResponse.response({})
-    }
-
-    return HttpResponse.response(movie)
   }
 }

@@ -1,11 +1,15 @@
 const MovieRouter = require('./movie-router')
 const MissingParamError = require('../helpers/missing-param-error')
+const ServerError = require('../helpers/server-error')
 
 const makeSut = () => {
   class MovieUseCaseSpy {
     getMovie (title, language) {
       this.movie = {}
 
+      if (title === 'throw_error') {
+        throw new Error()
+      }
       if (title !== 'not_found_movie') {
         this.movie.title = title
         this.movie.language = language
@@ -53,6 +57,7 @@ describe('Movie Router', () => {
     const { sut } = makeSut()
     const httpResponse = sut.route({})
     expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 
   test('Should return 500 if no body in httpRequest ', () => {
@@ -60,6 +65,7 @@ describe('Movie Router', () => {
     const httpRequest = {}
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 
   test('Should return 500 if no MovieUseCase is provided ', () => {
@@ -72,6 +78,7 @@ describe('Movie Router', () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 
   test('Should return 500 if no MovieUseCase no has getMovie method ', () => {
@@ -84,6 +91,7 @@ describe('Movie Router', () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 
   test('Should call getMovieUseCase with correct Params', () => {
@@ -108,8 +116,8 @@ describe('Movie Router', () => {
       }
     }
     const httpResponse = sut.route(httpRequest)
-    expect(httpRequest.body.title).toBe(httpResponse.body.title)
-    expect(httpRequest.body.language).toBe(httpResponse.body.language)
+    expect(httpRequest.body.title).toBe(httpResponse.body.movie.title)
+    expect(httpRequest.body.language).toBe(httpResponse.body.movie.language)
   })
 
   test('Should get not found Movie from MovieRoute', () => {
@@ -121,6 +129,19 @@ describe('Movie Router', () => {
       }
     }
     const httpResponse = sut.route(httpRequest)
-    expect(movieUseCaseSpy.movie).toEqual(httpResponse.body)
+    expect(movieUseCaseSpy.movie).toEqual(httpResponse.body.movie)
+  })
+
+  test('Should getMovie throw Error', () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        title: 'throw_error',
+        language: 'any_language'
+      }
+    }
+    const httpResponse = sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })

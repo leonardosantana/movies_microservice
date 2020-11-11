@@ -1,40 +1,5 @@
-class MovieRouter {
-  route (httpRequest) {
-    if (!httpRequest || !httpRequest.body) {
-      return HttpResponse.serverError()
-    }
-
-    const { title, language } = httpRequest.body
-    if (!title) {
-      return HttpResponse.badRequest('title')
-    }
-    if (!language) {
-      return HttpResponse.badRequest('language')
-    }
-  }
-}
-
-class HttpResponse {
-  static badRequest (param) {
-    return {
-      statusCode: 400,
-      body: new MissingParamError(param)
-    }
-  }
-
-  static serverError () {
-    return {
-      statusCode: 500
-    }
-  }
-}
-
-class MissingParamError extends Error {
-  constructor (param) {
-    super(`Missing param: ${param}`)
-    this.name = 'MissingParamError'
-  }
-}
+const MovieRouter = require('./movie-router')
+const MissingParamError = require('../helpers/missing-param-error')
 
 describe('Movie Router', () => {
   test('Should return 400 if no movie title is provided', () => {

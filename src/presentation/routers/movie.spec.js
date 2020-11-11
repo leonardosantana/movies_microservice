@@ -1,10 +1,22 @@
 class MovieRouter {
   route (httpRequest) {
+    if (!httpRequest || !httpRequest.body) {
+      return {
+        statusCode: 500
+      }
+    }
+
     const { title, language } = httpRequest.body
     if (!title || !language) {
-      return {
-        statusCode: 400
-      }
+      
+    }
+  }
+}
+
+class HttpResponse(){
+  static badRequest(){
+    return {
+      statusCode: 400
     }
   }
 }
@@ -30,5 +42,18 @@ describe('Movie Router', () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 500 if no httpRequest is provided', () => {
+    const sut = new MovieRouter()
+    const httpResponse = sut.route()
+    expect(httpResponse.statusCode).toBe(500)
+  })
+
+  test('Should return 500 if no body in httpRequest ', () => {
+    const sut = new MovieRouter()
+    const httpRequest = {}
+    const httpResponse = sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
   })
 })

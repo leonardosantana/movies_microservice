@@ -4,7 +4,7 @@
   "description": "Microserviço para indexação de filmes feita em node.js",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll --silent --noStackTrace",
+    "test": "jest --watch --silent --noStackTrace",
     "test:staged": "jest --passWithNoTests --silent --noStackTrace",
     "test:ci": "jest --coverage --noStackTrace" 
   },

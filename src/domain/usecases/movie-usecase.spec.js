@@ -29,7 +29,9 @@ const makeSut = () => {
   class LoadMovieByTitleRepositorySpy {
     async getMovie (title) {
       this.movie = {}
-      this.movie.title = title
+      if (title !== 'not_found_movie') {
+        this.movie.title = title
+      }
 
       return this.movie
     }
@@ -69,5 +71,11 @@ describe('Movie UseCase Tests', () => {
     const sut = new MovieUseCase({})
     const promise = sut.getMovie('any_title', 'any_language')
     await expect(promise).rejects.toThrow(new MissingParamError('movieRepository.getMovie'))
+  })
+
+  test('Should getMovie form repository', async () => {
+    const { sut, loadMovieByTitleRepositorySpy } = makeSut()
+    await sut.getMovie('not_found_movie', 'any_language')
+    expect(loadMovieByTitleRepositorySpy.movie).toEqual({})
   })
 })

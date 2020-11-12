@@ -1,5 +1,4 @@
-const MissingParamError = require('./missing-param-error')
-const ServerError = require('./server-error')
+const { MissingParamError, ServerError } = require('../errors')
 
 module.exports = class HttpResponse {
   static badRequest (param) {

@@ -1,6 +1,5 @@
 const MovieRouter = require('./movie-router')
-const MissingParamError = require('../helpers/missing-param-error')
-const ServerError = require('../helpers/server-error')
+const { MissingParamError, ServerError } = require('../errors')
 
 const makeSut = () => {
   class MovieUseCaseSpy {

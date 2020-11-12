@@ -13,6 +13,14 @@ class MovieUseCase {
       throw new MissingParamError('language')
     }
 
+    if (!this.movieRepository) {
+      throw new MissingParamError('movieRepository')
+    }
+
+    if (!this.movieRepository.getMovie) {
+      throw new MissingParamError('movieRepository.getMovie')
+    }
+
     return this.movieRepository.getMovie(title)
   }
 }
@@ -42,12 +50,24 @@ describe('Movie UseCase Tests', () => {
   test('Should throw if no language provided', async () => {
     const { sut } = makeSut()
     const promise = sut.getMovie('any_title', null)
-    await expect(promise).rejects.toThrow()
+    await expect(promise).rejects.toThrow(new MissingParamError('language'))
   })
 
   test('Should getMovie form repository', async () => {
     const { sut, loadMovieByTitleRepositorySpy } = makeSut()
     await sut.getMovie('any_title', 'any_language')
     expect(loadMovieByTitleRepositorySpy.movie.title).toBe('any_title')
+  })
+
+  test('Should throw with no repository provided', async () => {
+    const sut = new MovieUseCase()
+    const promise = sut.getMovie('any_title', 'any_language')
+    await expect(promise).rejects.toThrow(new MissingParamError('movieRepository'))
+  })
+
+  test('Should throw with no getMovie in repository provided', async () => {
+    const sut = new MovieUseCase({})
+    const promise = sut.getMovie('any_title', 'any_language')
+    await expect(promise).rejects.toThrow(new MissingParamError('movieRepository.getMovie'))
   })
 })

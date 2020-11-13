@@ -1,3 +1,4 @@
+const { MissingParamError } = require('../../utils/errors')
 const MongoHelper = require('../helpers/mongo-helper')
 const MovieRepository = require('./movie-repository')
 
@@ -35,5 +36,17 @@ describe('MovieRepository', () => {
     await movieModel.insertOne({ title: 'any_title' })
     const movie = await sut.getMovie('any_title')
     expect(movie.title).toBe('any_title')
+  })
+
+  test('Shoud throw if no movieModel is provided', async () => {
+    const sut = new MovieRepository()
+    const promisse = sut.getMovie('any_movie')
+    await expect(promisse).rejects.toThrow()
+  })
+
+  test('Shoud throw if no title is provided', async () => {
+    const { sut } = makeSut()
+    const promisse = sut.getMovie()
+    await expect(promisse).rejects.toThrow(new MissingParamError('title'))
   })
 })

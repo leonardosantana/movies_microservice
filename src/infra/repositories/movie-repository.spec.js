@@ -1,7 +1,7 @@
-const { MongoClient } = require('mongodb')
+const MongoHelper = require('../helpers/mongo-helper')
 const MovieRepository = require('./movie-repository')
 
-let client, db
+let db
 
 const makeSut = () => {
   const movieModel = db.collection('movies')
@@ -12,11 +12,8 @@ const makeSut = () => {
 
 describe('MovieRepository', () => {
   beforeAll(async () => {
-    client = await MongoClient.connect(process.env.MONGO_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
-    db = client.db()
+    await MongoHelper.connect(process.env.MONGO_URL)
+    db = await MongoHelper.getDb()
   })
 
   beforeEach(async () => {
@@ -24,7 +21,7 @@ describe('MovieRepository', () => {
   })
 
   afterAll(async () => {
-    await client.close()
+    await MongoHelper.close()
   })
 
   test('Should return null if title isnt provided', async () => {
